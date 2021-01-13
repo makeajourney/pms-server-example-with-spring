@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class PmsApplication
 
 fun main(args: Array<String>) {
-	runApplication<PmsApplication>(*args)
+    runApplication<PmsApplication>(*args)
 }
