@@ -2,6 +2,7 @@ package kr.makeajourney.pms.domain.visit
 
 import kr.makeajourney.pms.domain.hospital.Hospital
 import kr.makeajourney.pms.domain.patient.Patient
+import kr.makeajourney.pms.web.dto.VisitResponseDto
 import java.time.LocalDateTime
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -21,7 +22,7 @@ data class Visit(
     @JoinColumn(name = "patient_id")
     val patient: Patient,
 
-    val receptionDateTime: LocalDateTime,
+    var receptionDateTime: LocalDateTime,
     var statusCode: String,
 ) {
 
@@ -33,4 +34,9 @@ data class Visit(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0
+
+    fun update(receptionDateTime: LocalDateTime, statusCode: String) {
+        this.receptionDateTime = receptionDateTime
+        this.statusCode = statusCode
+    }
 }
