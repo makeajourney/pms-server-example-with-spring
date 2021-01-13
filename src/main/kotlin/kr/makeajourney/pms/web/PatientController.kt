@@ -7,6 +7,7 @@ import kr.makeajourney.pms.service.patient.PatientService
 import kr.makeajourney.pms.web.dto.PatientResponseDto
 import kr.makeajourney.pms.web.dto.PatientSaveRequestDto
 import kr.makeajourney.pms.web.dto.PatientUpdateRequestDto
+import kr.makeajourney.pms.web.dto.VisitResponseDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -82,5 +83,6 @@ class PatientController(
             this.sexCode.codeName,
             this.birthDate.toString(),
             this.phoneNumber,
+            this.visitList.map { VisitResponseDto(it.receptionDateTime, it.statusCode) }
         )
 }

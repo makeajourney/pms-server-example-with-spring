@@ -8,4 +8,5 @@ data class PatientResponseDto(
     val sex: String,
     val birthDate: String,
     val phoneNumber: String?,
+    val visits: List<VisitResponseDto>,
 )
