@@ -1,6 +1,7 @@
 package kr.makeajourney.pms.web
 
 
+import kr.makeajourney.pms.domain.PageRequest
 import kr.makeajourney.pms.domain.patient.Patient
 import kr.makeajourney.pms.service.hospital.HospitalService
 import kr.makeajourney.pms.service.patient.PatientService
@@ -9,6 +10,8 @@ import kr.makeajourney.pms.web.dto.PatientResponseDto
 import kr.makeajourney.pms.web.dto.PatientSaveRequestDto
 import kr.makeajourney.pms.web.dto.PatientUpdateRequestDto
 import kr.makeajourney.pms.web.dto.VisitResponseDto
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -57,10 +60,14 @@ class PatientController(
         @PathVariable hospitalId: Long,
         @RequestParam name: String?,
         @RequestParam registrationNo: String?,
-        @RequestParam birthDate: String?
-    ): ResponseEntity<List<PatientListResponse>> {
+        @RequestParam birthDate: String?,
+        pageRequest: PageRequest,
+    ): ResponseEntity<Page<PatientListResponse>> {
 
-        val patientList = patientService.findByHospitalIdAndQuery(hospitalId, name, registrationNo, birthDate)
+        val pagedPatientList =
+            patientService.findByHospitalIdAndQuery(hospitalId, name, registrationNo, birthDate, pageRequest.of())
+
+        val patientList = pagedPatientList.toList()
 
         if (patientList.isEmpty()) {
             return ResponseEntity.noContent().build()
@@ -84,7 +91,7 @@ class PatientController(
             )
         }
 
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok(PageImpl(response, pageRequest.of(), pagedPatientList.totalElements))
     }
 
     @GetMapping("/api/hospital/{hospitalId}/patient/{patientId}")

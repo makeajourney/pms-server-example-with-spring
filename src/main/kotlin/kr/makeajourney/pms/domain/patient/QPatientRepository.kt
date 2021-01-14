@@ -4,6 +4,9 @@ package kr.makeajourney.pms.domain.patient
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.makeajourney.pms.domain.patient.QPatient.patient
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 
 
@@ -16,10 +19,11 @@ class QPatientRepository(
         hospitalId: Long,
         name: String?,
         registrationNo: String?,
-        birthDate: String?
-    ): List<Patient> {
+        birthDate: String?,
+        pageable: Pageable,
+    ): Page<Patient> {
 
-        return jpaQueryFactory
+        val results = jpaQueryFactory
             .selectFrom(patient)
             .leftJoin(patient.visitList)
             .fetchJoin()
@@ -29,7 +33,12 @@ class QPatientRepository(
                 registrationNumberEq(registrationNo),
                 birthDateEq(birthDate)
             )
-            .fetch()
+            .distinct()
+            .limit(pageable.pageSize.toLong())
+            .offset(pageable.offset)
+            .fetchResults()
+
+        return PageImpl(results.results, pageable, results.total)
     }
 
     private fun nameEq(name: String?): BooleanExpression? {
