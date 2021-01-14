@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -52,12 +53,14 @@ class PatientController(
     }
 
     @GetMapping("/api/hospital/{hospitalId}/patient")
-    fun getList(@PathVariable hospitalId: Long): ResponseEntity<List<PatientListResponse>> {
+    fun getList(
+        @PathVariable hospitalId: Long,
+        @RequestParam name: String?,
+        @RequestParam registrationNo: String?,
+        @RequestParam birthDate: String?
+    ): ResponseEntity<List<PatientListResponse>> {
 
-        val hospital = hospitalService.findById(hospitalId)
-            ?: return ResponseEntity.badRequest().build()
-
-        val patientList = patientService.findByHospital(hospital)
+        val patientList = patientService.findByHospitalIdAndQuery(hospitalId, name, registrationNo, birthDate)
 
         if (patientList.isEmpty()) {
             return ResponseEntity.noContent().build()

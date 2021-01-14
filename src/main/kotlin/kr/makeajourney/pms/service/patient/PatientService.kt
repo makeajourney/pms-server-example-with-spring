@@ -1,8 +1,10 @@
 package kr.makeajourney.pms.service.patient
 
+
 import kr.makeajourney.pms.domain.hospital.Hospital
 import kr.makeajourney.pms.domain.patient.Patient
 import kr.makeajourney.pms.domain.patient.PatientRepository
+import kr.makeajourney.pms.domain.patient.QPatientRepository
 import kr.makeajourney.pms.web.dto.PatientSaveRequestDto
 import kr.makeajourney.pms.web.dto.PatientUpdateRequestDto
 import org.springframework.data.repository.findByIdOrNull
@@ -11,7 +13,10 @@ import javax.transaction.Transactional
 
 
 @Service
-class PatientService(val patientRepository: PatientRepository) {
+class PatientService(
+    val patientRepository: PatientRepository,
+    val qPatientRepository: QPatientRepository,
+) {
 
     fun save(hospital: Hospital, requestDto: PatientSaveRequestDto): Long {
         return patientRepository.save(requestDto.toEntity(hospital)).id
@@ -38,7 +43,12 @@ class PatientService(val patientRepository: PatientRepository) {
         patientRepository.delete(patient)
     }
 
-    fun findByHospital(hospital: Hospital): List<Patient> {
-        return patientRepository.getListByHospital(hospital).distinct()
+    fun findByHospitalIdAndQuery(
+        hospitalId: Long,
+        name: String?,
+        registrationNo: String?,
+        birthDate: String?
+    ): List<Patient> {
+        return qPatientRepository.findByHospitalIdAndQuery(hospitalId, name, registrationNo, birthDate).distinct()
     }
 }
