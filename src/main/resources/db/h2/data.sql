@@ -14,3 +14,10 @@ insert into code (code_group_name, code, code_name) values ('진료유형코드'
 insert into code (code_group_name, code, code_name) values ('진료유형코드', 'T', '검사')
 
 insert into hospital (name, nursing_institution_number, chief_name) values ('에이치디정션내과', '31100554', '김소연')
+insert into hospital (name, nursing_institution_number, chief_name) values ('스프링피부과', '31100678', '스프링')
+
+insert into patient (name, registration_number, sex_code, birth_date, phone_number, hospital_id) values ('환자1', 'reg_no_1', 'F', '1989-11-18', '010-2872-4136', 1)
+insert into patient (name, registration_number, sex_code, birth_date, phone_number, hospital_id) values ('환자2', 'reg_no_2', 'M', '2009-11-18', '010-2872-4136', 1)
+
+insert into visit (hospital_id, patient_id, reception_date_time, status_code) values (1, 2, '2021-01-12', '종료')
+insert into visit (hospital_id, patient_id, reception_date_time, status_code) values (1, 2, '2021-01-14', '방문중')

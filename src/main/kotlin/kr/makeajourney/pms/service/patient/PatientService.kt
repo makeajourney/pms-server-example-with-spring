@@ -37,4 +37,8 @@ class PatientService(val patientRepository: PatientRepository) {
     fun delete(patient: Patient) {
         patientRepository.delete(patient)
     }
+
+    fun findByHospital(hospital: Hospital): List<Patient> {
+        return patientRepository.getListByHospital(hospital).distinct()
+    }
 }

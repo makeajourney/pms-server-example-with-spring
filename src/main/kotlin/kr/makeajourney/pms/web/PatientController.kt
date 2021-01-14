@@ -4,6 +4,7 @@ package kr.makeajourney.pms.web
 import kr.makeajourney.pms.domain.patient.Patient
 import kr.makeajourney.pms.service.hospital.HospitalService
 import kr.makeajourney.pms.service.patient.PatientService
+import kr.makeajourney.pms.web.dto.PatientListResponse
 import kr.makeajourney.pms.web.dto.PatientResponseDto
 import kr.makeajourney.pms.web.dto.PatientSaveRequestDto
 import kr.makeajourney.pms.web.dto.PatientUpdateRequestDto
@@ -48,6 +49,39 @@ class PatientController(
         } else {
             ResponseEntity.badRequest().build()
         }
+    }
+
+    @GetMapping("/api/hospital/{hospitalId}/patient")
+    fun getList(@PathVariable hospitalId: Long): ResponseEntity<List<PatientListResponse>> {
+
+        val hospital = hospitalService.findById(hospitalId)
+            ?: return ResponseEntity.badRequest().build()
+
+        val patientList = patientService.findByHospital(hospital)
+
+        if (patientList.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+
+        val response: List<PatientListResponse> = patientList.map {
+
+            val latestVisit = if (it.visitList.isEmpty()) {
+                null
+            } else {
+                it.visitList.maxOf { visit -> visit.receptionDateTime }
+            }
+
+            PatientListResponse(
+                it.name,
+                it.registrationNumber,
+                it.sexCode.codeName,
+                it.birthDate,
+                it.phoneNumber,
+                latestVisit?.toLocalDate(),
+            )
+        }
+
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/api/hospital/{hospitalId}/patient/{patientId}")
